@@ -4,6 +4,29 @@
 import eel
 import os
 import tkinter as tk
+
+print("--- STARTING DEBUG ---")
+
+# Get the directory the script is being run from
+current_working_directory = os.getcwd()
+print(f"[*] Current Working Directory is: {current_working_directory}")
+
+# Get the directory where the main.py script itself is located
+script_directory = os.path.dirname(os.path.abspath(__file__))
+print(f"[*] The script's own directory is: {script_directory}")
+
+# Check if dev.html exists at the path we EXPECT it to be
+expected_dev_html_path = os.path.join(script_directory, 'dev.html')
+print(f"[*] Checking for dev.html at this exact path: {expected_dev_html_path}")
+
+if os.path.exists(expected_dev_html_path):
+    print("\n[+] SUCCESS: dev.html WAS FOUND where we expected it!")
+else:
+    print("\n[-] FAILURE: dev.html WAS NOT FOUND at that path. This is the root of the 404 error.")
+
+print("--- ENDING DEBUG ---")
+
+
 from tkinter import filedialog
 import requests
 from typing import Dict
@@ -48,10 +71,10 @@ if __name__ == '__main__':
     window_position = get_screen_center_position(window_size)
 
     eel.start(
-        'index.html',
-        size=window_size,
-        position=window_position,
-        port=0  # <-- THIS IS THE FIX! Use any available port.
-    )
+    'dev.html',  # <-- Tell Eel to open our new loader file
+    size=window_size,
+    position=window_position,
+    port=0
+)
 
     print("--- VortexFlow has been closed. ---")

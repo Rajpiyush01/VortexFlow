@@ -1,92 +1,115 @@
 document.addEventListener("DOMContentLoaded", () => {
   // --- 1. ELEMENT SELECTORS ---
-  const canvas = document.getElementById("cgi-canvas");
-  const introSequence = document.getElementById("introSequence");
-  const cyclingText = document.getElementById("cyclingText");
-  const appContainer = document.getElementById("appContainer");
   const sidebar = document.getElementById("sidebar");
   const sidebarToggle = document.getElementById("sidebarToggle");
   const overlay = document.getElementById("overlay");
-  const sidebarThemeToggle = document.querySelector(
-    ".sidebar-footer #themeToggle"
+  const themeToggle = document.getElementById("themeToggle");
+  const menuItems = document.querySelectorAll(
+    ".sidebar-menu .menu-item > button"
   );
-  const menuItems = document.querySelectorAll(".menu-item");
   const widgetButtons = document.querySelectorAll("[data-widget]");
-  const allToggles = document.querySelectorAll(".toggle-switch");
+  const appContainer = document.getElementById("appContainer");
+  const introSequence = document.getElementById("introSequence");
 
-  // --- 2. STATE MANAGEMENT ---
-  let isAppLaunched = false;
+  // --- 2. STATE ---
   let currentTheme = "dark";
-  let cycleInterval;
+  let isAppLaunched = false; // Prevents the intro from hiding again
 
-  // --- 3. DUAL-MODE CGI ANIMATION ---
-  const ctx = canvas.getContext("2d");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  let particles = [];
-  class Particle {
-    /* ... full particle class from previous version ... */
-  }
-  function setupParticles() {
-    /* ... full setupParticles function ... */
-  }
-  function animateParticles() {
-    /* ... full animateParticles function ... */
+  // --- 3. CORE FUNCTIONS ---
+
+  function launchApp() {
+    if (isAppLaunched) return;
+    isAppLaunched = true;
+    if (introSequence) introSequence.classList.add("hidden");
+    if (appContainer) appContainer.classList.add("visible");
   }
 
-  // --- 4. ICON DEFINITIONS ---
-  const icons = {
-    sun: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`,
-    moon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`,
-  };
+  function toggleSidebar() {
+    // The first time the sidebar is opened, launch the main app view
+    if (!isAppLaunched) {
+      launchApp();
+    }
+    sidebar.classList.toggle("open");
+    overlay.classList.toggle("show");
+  }
 
-  // --- 5. THEME MANAGEMENT ---
   function applyTheme(theme) {
-    /* ... full applyTheme function ... */
+    currentTheme = theme;
+    document.documentElement.setAttribute("data-theme", theme);
+    if (themeToggle) {
+      themeToggle.innerHTML =
+        theme === "dark"
+          ? `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`
+          : `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`;
+    }
   }
-  if (sidebarThemeToggle) {
-    sidebarThemeToggle.addEventListener("click", () => {
+
+  function switchWidget(widgetId) {
+    document
+      .querySelectorAll(".widget")
+      .forEach((w) => w.classList.remove("active"));
+    const newWidget = document.getElementById(widgetId);
+    if (newWidget) {
+      newWidget.classList.add("active");
+    }
+    document
+      .querySelectorAll(".submenu-item")
+      .forEach((item) => item.classList.remove("active"));
+    const activeButton = document.querySelector(
+      `button[data-widget="${widgetId}"]`
+    );
+    if (
+      activeButton &&
+      activeButton.parentElement.classList.contains("submenu-item")
+    ) {
+      activeButton.parentElement.classList.add("active");
+    }
+  }
+
+  // --- 4. EVENT LISTENERS ---
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener("click", toggleSidebar);
+  }
+  if (overlay) {
+    overlay.addEventListener("click", toggleSidebar);
+  }
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
       applyTheme(currentTheme === "dark" ? "light" : "dark");
     });
   }
 
-  // --- 6. "ATTRACT MODE" SEQUENCE LOGIC ---
-  const introLine = "Intelligently automating your digital workflow.";
-  const promptLine = "Open the Command Deck to begin your work";
-  const fillerLines = [
-    "Connecting to Neural Nexus...",
-    /* ... */ "Welcome, Operator.",
-  ];
-
-  function startIntroCycle() {
-    /* ... full startIntroCycle function ... */
-  }
-
-  // --- 7. CORE APP INTERACTIVITY ---
-  function showIntro() {
-    /* ... full showIntro function ... */
-  }
-  function launchApp() {
-    /* ... full launchApp function ... */
-  }
-  function toggleSidebar() {
-    /* ... full toggleSidebar function ... */
-  }
-
-  sidebarToggle.addEventListener("click", toggleSidebar);
-  overlay.addEventListener("click", toggleSidebar);
-  menuItems.forEach((item) => {
-    /* ... full menu item logic ... */
+  menuItems.forEach((button) => {
+    button.addEventListener("click", () => {
+      const parentLi = button.parentElement;
+      if (button.hasAttribute("data-widget")) {
+        if (!isAppLaunched) launchApp();
+        switchWidget(button.dataset.widget);
+        // Only close sidebar if it's a direct click, not a category expansion
+        if (!parentLi.querySelector(".submenu")) {
+          toggleSidebar();
+        }
+      } else {
+        parentLi.classList.toggle("active");
+      }
+    });
   });
+
   widgetButtons.forEach((button) => {
-    /* ... full widget button logic ... */
-  });
-  allToggles.forEach((toggle) => {
-    /* ... full toggle logic ... */
+    if (button.parentElement.classList.contains("submenu-item")) {
+      button.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (!isAppLaunched) launchApp();
+        switchWidget(button.dataset.widget);
+        toggleSidebar();
+      });
+    }
   });
 
-  // --- 8. INITIALIZE APP ---
+  // --- 5. INITIALIZATION ---
   applyTheme("dark");
-  animateParticles();
-  startIntroCycle();
+  console.log(
+    "VortexFlow UI Initialized. Click the sidebar to launch the main view."
+  );
 });
